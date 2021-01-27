@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="image/fav-icon.svg">
+    
+</head>
+
+<body>
+
+  <div class="anzeigefeld">
+
+    <header><h1 id="dom" onmouseover="mouseOut()" onmouseout="mousOver()">ZU ERLEDIGEN</h1></header>
+
+
+    <div class="inputFeld">
+      <input type="text" placeholder="NEUE AUFGABE HINZUFÜGEN">
+      <button><i class="hinzufügen"></i><img src="image/plus.svg" alt="add" > </button>
+    </div>
+
+
+    <ul class="aufgabenListe">
+    </ul>
+
+
+    <div class="footer">
+      <span>DU HAST  <span class="unerledigteAufgabe"></span> AUFGABEN</span>
+      <button ><img src="image/trash.svg" alt="trash" > </button>
+    </div>
+
+  </div>
+
+
+
+<script>
+
+
+    const inputBox = document.querySelector(".inputFeld input");
+    const addButton = document.querySelector(".inputFeld button");
+    const aufgabenListe = document.querySelector(".aufgabenListe");
+    const deleteAllButton = document.querySelector(".footer button");  
+
+
+    function mousOver() {
+      document.getElementById("dom").style.color = "black";
+    }
+
+    function mouseOut() {
+      document.getElementById("dom").style.color = "blue";
+    }
+    
+
+    inputBox.onkeyup = ()=>{
+      let userEnteredValue = inputBox.value; 
+      if(userEnteredValue.trim() != 0){
+      addButton.classList.add("active"); 
+      }else{
+        addButton.classList.remove("active");
+      }
+    }
+    
+
+    aufgabenAnzeige();
+    
+
+    addButton.onclick = ()=>{ 
+      let userEnteredValue = inputBox.value; 
+      let getLocalStorageData = localStorage.getItem("Neue Aufgabe"); 
+      if(getLocalStorageData == null){ 
+        listArray = []; 
+      }else{
+        listArray = JSON.parse(getLocalStorageData);  
+      }
+      listArray.push(userEnteredValue); 
+      localStorage.setItem("Neue Aufgabe", JSON.stringify(listArray)); 
+      aufgabenAnzeige(); 
+      addButton.classList.remove("active"); 
+    }
+    
+
+    function aufgabenAnzeige(){
+      let getLocalStorageData = localStorage.getItem("Neue Aufgabe");
+      if(getLocalStorageData == null){
+        listArray = [];
+      }else{
+        listArray = JSON.parse(getLocalStorageData); 
+      }
+
+
+      const unerledigteAufgabeNumb = document.querySelector(".unerledigteAufgabe");
+      unerledigteAufgabeNumb.textContent = listArray.length; 
+
+
+      if(listArray.length > 0){ 
+        deleteAllButton.classList.add("active"); 
+      }else{
+        deleteAllButton.classList.remove("active"); 
+      }
+      let newLiTag = "";
+      listArray.forEach((element, index) => {
+        newLiTag += `<li>
+          ${element}<span class="icon" onclick="deleteTask(${index})">
+            <i class="hinzufügen"></i></span>
+              </li>`;
+      });
+      aufgabenListe.innerHTML = newLiTag; 
+      inputBox.value = ""; 
+    }
+    
+
+    function aufgabeLöschen(index){
+      let getLocalStorageData = localStorage.getItem("Neue Aufgabe");
+      listArray = JSON.parse(getLocalStorageData);
+      listArray.splice(index, 1); 
+      localStorage.setItem("Neue Aufgabe", JSON.stringify(listArray));
+      aufgabenAnzeige(); 
+    }
+    
+    
+    deleteAllButton.onclick = ()=>{
+      listArray = []; 
+      localStorage.setItem("Neue Aufgabe", JSON.stringify(listArray)); 
+      aufgabenAnzeige(); 
+    }
+    
+    
+    </script>
+
+
+</body>
+</html>
